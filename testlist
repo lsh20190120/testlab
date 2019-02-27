@@ -1,0 +1,131 @@
+#*************************************list.h*************************************/
+#ifndef LIST_H
+#define LIST_H
+
+typedef struct listnode
+{
+	struct listnodee * next;
+	int value;
+}Node;
+
+void List_print(Node * head);
+Node * Node_construct(int value);
+Node * List_insert(Node * head, int value);
+Node * List_search(Node * head,int value);
+
+Node * List_delete(Node * head,int value);
+
+#endif
+
+
+#**********************************list.c************************************************/
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "list.h"
+
+
+Node * Node_construct(int val)
+{
+	Node * nd = malloc(sizeof(Node));
+	nd -> value = val;
+	nd -> next = NULL;
+	return nd;
+}
+
+Node * List_insert(Node * head,int val)
+{
+	printf("insert %d\n",val);
+	Node * ptr = Node_construct(val);
+	ptr -> next = head;
+	return ptr;
+}
+
+Node * List_search(Node * head,int val)
+{
+	Node * ptr = head;
+	while(ptr != NULL)
+	{
+		if((ptr -> value) == val)
+			return ptr;
+		else
+			ptr = ptr -> next;
+	}
+	return ptr;
+}
+
+Node * List_delete(Node * head ,int val)
+{
+	printf("delete %d",val);
+	Node * p = head;
+
+	if( p == NULL)
+		return p;
+	if(p -> value == val)
+	{
+		p = p -> next;
+		free (head);
+		return p;
+	}
+	
+	Node *q = p -> next;
+	while((q != NULL) && (q -> value) != val)
+	{
+		p = q -> next;
+		q = q -> next;
+	}
+	if( q != NULL)
+	{
+		p -> next = q -> next;
+		free(q);
+	}
+	return head;
+}
+
+void List_print(Node * head)
+{
+	printf("\nPrint the whole list:\n");
+	while (head != NULL)
+	{
+		printf("%d ", head -> value);
+		head = head -> next;
+	}
+	printf("\n\n");
+}
+
+
+#************************************test0214**************************************/
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "list.h"
+
+
+int main(int argc,char *argv[])
+{
+	Node * head = NULL;
+	head = List_insert(head,917);
+	head = List_insert(head,-504);
+	head = List_insert(head,326);
+	List_print(head);
+	if(List_search(head,138) != NULL)
+		printf("138 is in the list!\n");
+	else 
+		printf("138 is not in the list!\n");
+	List_delete(head,-504);
+	List_print(head);
+	return EXIT_SUCCESS;
+}
+
+
+#************************************makefile**************************************/
+GCC = gcc
+CFLAGS = -g -Wall -Wshadow
+
+test0214:list.o test0214.o
+	$(GCC) $(CFLAGS) list.o test0214.o -o test0214
+
+list.o : list.c
+	$(GCC) $(CFLAGS) -c list.c
+test0214.o:  test0214.c
+	$(GCC) $(CFLAGS) -c test0214.c
